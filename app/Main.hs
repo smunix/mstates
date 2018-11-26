@@ -19,7 +19,7 @@ data ValueError where
 data ListError where
   UnexpectedEndOfList :: ListError
   UnexpectedValue :: ValueError -> T.Text -> ListError
-  ExpectedEoL :: ListError
+  ExpectedEoL :: String -> ListError
   deriving (Show)
 
 type Values = [Value]
@@ -71,7 +71,7 @@ decValues vxs dec = do
   (a, s) <- runStateT (runDecoder dec) vxs
   case s of
     [] -> return a
-    (v:vals) -> Left ExpectedEoL
+    vals -> Left (ExpectedEoL . show $ vals)
 
 main :: IO ()
 main = do
